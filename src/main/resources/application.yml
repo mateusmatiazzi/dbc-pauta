@@ -1,13 +1,20 @@
 server:
   port: 8080
+  error.include-stacktrace: never
 
 spring:
   datasource:
-    url: jdbc:h2:file:./data/dbc
+    url: jdbc:h2:file:./data/dbc;DATABASE_TO_UPPER=false
     username: dbc
     password: secret
     driverClassName: org.h2.Driver
   h2:
     console.enabled: true
+    console.path: /h2
+    console.settings.trace: false
+    spring.h2.console.settings.web-allow-others: false
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
