@@ -5,8 +5,8 @@ import br.com.dbc.pauta.dbcpauta.gateway.database.entity.Pauta;
 import br.com.dbc.pauta.dbcpauta.gateway.database.entity.SessaoVotacao;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.PautaRepositoryFacade;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.SessaoVotacaoRepositoryFacade;
+import br.com.dbc.pauta.dbcpauta.http.domain.SessaoDTO;
 import br.com.dbc.pauta.dbcpauta.http.domain.request.SessaoVotacaoRequest;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -44,13 +44,21 @@ public class IniciarVotacao {
 
     private SessaoVotacao salvaNovaSessaodeVotos(SessaoVotacaoRequest request) {
         Pauta pauta = buscaPauta(request.getPautaId());
-        SessaoVotacao sessaoVotacao = DozerBeanMapperBuilder.buildDefault().map(request.getSessaoDTO(), SessaoVotacao.class);
+        SessaoVotacao sessaoVotacao = gerarSessaoVotacao(request.getSessaoDTO());
 
         sessaoVotacao.setDataInicio(LocalDateTime.now());
         sessaoVotacao.setPauta(pauta);
         sessaoVotacaoRepositoryFacade.save(sessaoVotacao);
         pauta.setSessaoVotacao(sessaoVotacao);
         pautaRepositoryFacade.save(pauta);
+        return sessaoVotacao;
+    }
+
+    private SessaoVotacao gerarSessaoVotacao(SessaoDTO sessaoDTO) {
+        SessaoVotacao sessaoVotacao = new SessaoVotacao();
+        sessaoVotacao.setId(sessaoDTO.getId());
+        sessaoVotacao.setTempoDeVotacao(sessaoDTO.getTempoDeVotacao());
+
         return sessaoVotacao;
     }
 

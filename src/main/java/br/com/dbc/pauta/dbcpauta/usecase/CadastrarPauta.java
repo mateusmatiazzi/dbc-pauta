@@ -4,7 +4,6 @@ import br.com.dbc.pauta.dbcpauta.exception.BusinessException;
 import br.com.dbc.pauta.dbcpauta.gateway.database.entity.Pauta;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.PautaRepositoryFacade;
 import br.com.dbc.pauta.dbcpauta.http.domain.PautaDTO;
-import com.github.dozermapper.core.DozerBeanMapperBuilder;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +33,17 @@ public class CadastrarPauta {
     }
 
     private Pauta salvar(PautaDTO pautaDTO) {
-        Pauta pauta = DozerBeanMapperBuilder.buildDefault().map(pautaDTO, Pauta.class);
+        Pauta pauta = gerarPauta(pautaDTO);
         pautaRepositoryFacade.save(pauta);
 
+        return pauta;
+    }
+
+    private Pauta gerarPauta(PautaDTO pautaDTO) {
+        Pauta pauta = new Pauta();
+        pauta.setId(pautaDTO.getId());
+        pauta.setNome(pautaDTO.getNome());
+        pauta.setDescricao(pautaDTO.getDescricao());
         return pauta;
     }
 
