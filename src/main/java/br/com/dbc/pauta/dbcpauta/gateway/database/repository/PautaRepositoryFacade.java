@@ -9,4 +9,6 @@ public interface PautaRepositoryFacade {
     void save(Pauta pauta);
 
     Pauta findByNome(String nome);
+
+    Pauta findById(Long id);
 }

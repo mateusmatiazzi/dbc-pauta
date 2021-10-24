@@ -19,4 +19,7 @@ public class Pauta {
     @Column(name = "descricao")
     private String descricao;
 
+    @JoinColumn(name = "id_sessao_votacao", referencedColumnName = "id", unique = true)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private SessaoVotacao sessaoVotacao;
 }

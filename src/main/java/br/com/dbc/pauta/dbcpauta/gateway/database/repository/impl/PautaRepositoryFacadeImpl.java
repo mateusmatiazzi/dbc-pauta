@@ -25,4 +25,9 @@ public class PautaRepositoryFacadeImpl implements PautaRepositoryFacade {
     public Pauta findByNome(String nome) {
         return pautaRepository.findByNome(nome);
     }
+
+    @Override
+    public Pauta findById(Long id) {
+        return pautaRepository.findById(id).orElse(null);
+    }
 }
