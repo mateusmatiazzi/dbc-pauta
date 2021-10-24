@@ -5,6 +5,8 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -30,4 +32,12 @@ public class SessaoVotacao {
     @JsonIgnore
     @OneToOne(mappedBy = "sessaoVotacao", fetch = FetchType.LAZY)
     private Pauta pauta;
+
+    @ManyToMany
+    @JoinTable(
+            name = "usuarios_que_votaram",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "sessao_id")
+    )
+    private List<Usuario> usuariosQueVotaram = new ArrayList<>();
 }

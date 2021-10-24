@@ -70,6 +70,7 @@ class IniciarVotacaoTest {
         when(pautaRepositoryFacade.findById(any())).thenReturn(new Pauta());
 
         SessaoVotacao sessaoVotacao = iniciarVotacao.executar(sessaoVotacaoRequest);
+
         assertEquals(1, sessaoVotacao.getTempoDeVotacao());
         verify(pautaRepositoryFacade, times(2)).findById(any());
         verify(pautaRepositoryFacade).save(any());

@@ -1,6 +1,8 @@
 package br.com.dbc.pauta.dbcpauta.http;
 
 import br.com.dbc.pauta.dbcpauta.http.domain.request.SessaoVotacaoRequest;
+import br.com.dbc.pauta.dbcpauta.http.domain.request.VotoRequest;
+import br.com.dbc.pauta.dbcpauta.usecase.CadastrarVoto;
 import br.com.dbc.pauta.dbcpauta.usecase.IniciarVotacao;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -24,9 +26,16 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class VotacaoWS {
 
     private final IniciarVotacao iniciarVotacao;
+    private final CadastrarVoto cadastrarVoto;
 
-    @PostMapping("/iniciar-votacao}")
-    public ResponseEntity<?> calculoValorFinanciado(@Valid @RequestBody SessaoVotacaoRequest sessaoVotacaoRequest) {
+    @PostMapping("/iniciar-votacao")
+    public ResponseEntity<?> iniciarVotacao(@Valid @RequestBody SessaoVotacaoRequest sessaoVotacaoRequest) {
         return new ResponseEntity<>(iniciarVotacao.executar(sessaoVotacaoRequest), HttpStatus.OK);
+    }
+
+    @PostMapping("/cadastrar-voto")
+    public ResponseEntity<?> cadastrarVoto(@Valid @RequestBody VotoRequest votoRequest) {
+        cadastrarVoto.executar(votoRequest);
+        return new ResponseEntity<>("Voto Cadastrado com Sucesso", HttpStatus.OK);
     }
 }

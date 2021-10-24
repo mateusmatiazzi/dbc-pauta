@@ -26,7 +26,7 @@ public class PautaWS {
     private final CadastrarPauta cadastrarPauta;
 
     @PostMapping("/criar-pauta")
-    public ResponseEntity<?> calculoValorFinanciado(@Valid @RequestBody PautaRequest pautaRequest) {
+    public ResponseEntity<?> cadastrarNovaPauta(@Valid @RequestBody PautaRequest pautaRequest) {
         return new ResponseEntity<>(cadastrarPauta.executar(pautaRequest.getPautaDTO()), HttpStatus.OK);
     }
 
