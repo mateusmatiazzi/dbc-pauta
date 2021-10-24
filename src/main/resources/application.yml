@@ -22,3 +22,14 @@ spring:
     init:
       mode: always
 
+api:
+  user-info:
+    endpoint: https://user-info.herokuapp.com
+
+logging:
+  level:
+    io:
+      swagger:
+        models:
+          parameters:
+            AbstractSerializableParameter: ERROR

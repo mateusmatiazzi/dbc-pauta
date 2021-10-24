@@ -8,6 +8,7 @@ import br.com.dbc.pauta.dbcpauta.gateway.database.entity.Voto;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.PautaRepositoryFacade;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.SessaoVotacaoRepositoryFacade;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.UsuarioRepositoryFacade;
+import br.com.dbc.pauta.dbcpauta.http.client.UserInfoWSClient;
 import br.com.dbc.pauta.dbcpauta.http.domain.request.VotoRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,6 +22,8 @@ import java.util.Arrays;
 
 import static br.com.dbc.pauta.dbcpauta.gateway.database.entity.Voto.NAO;
 import static br.com.dbc.pauta.dbcpauta.gateway.database.entity.Voto.SIM;
+import static br.com.dbc.pauta.dbcpauta.http.client.enumeration.Permissao.ABLE_TO_VOTE;
+import static br.com.dbc.pauta.dbcpauta.http.client.enumeration.Permissao.UNABLE_TO_VOTE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -41,6 +44,9 @@ class CadastrarVotoTest {
 
     @Mock
     private UsuarioRepositoryFacade usuarioRepositoryFacade;
+
+    @Mock
+    private UserInfoWSClient userInfoWSClient;
 
     @Test
     void deveFalharQuandoNaoTiverOsDadosDeUmVoto() {
@@ -79,6 +85,8 @@ class CadastrarVotoTest {
     void deveFalharQuandoAVotacaoEstiverEncerrada() {
         VotoRequest votoRequest = gerarVotoRequest(SIM);
         when(pautaRepositoryFacade.findById(any())).thenReturn(gerarPauta(gerarSessaoPorAno(2000)));
+        when(usuarioRepositoryFacade.findById(any())).thenReturn(gerarUsuario(1L));
+        when(userInfoWSClient.buscaPermissaoUsuario(any())).thenReturn(ABLE_TO_VOTE);
 
         BusinessException businessException = assertThrows(BusinessException.class, () -> cadastrarVoto.executar(votoRequest));
         assertEquals("A votação já foi encerrada", businessException.getMessage());
@@ -89,9 +97,21 @@ class CadastrarVotoTest {
         VotoRequest votoRequest = gerarVotoRequest(SIM);
         when(pautaRepositoryFacade.findById(any())).thenReturn(gerarPauta(gerarSessaoPorAno(2030)));
         when(usuarioRepositoryFacade.findById(any())).thenReturn(gerarUsuario(1L));
+        when(userInfoWSClient.buscaPermissaoUsuario(any())).thenReturn(ABLE_TO_VOTE);
 
         BusinessException businessException = assertThrows(BusinessException.class, () -> cadastrarVoto.executar(votoRequest));
         assertEquals("O usuário já votou nessa sessão", businessException.getMessage());
+    }
+
+    @Test
+    void deveFalharQuandoOUsuarioNaoTiverPermissao() {
+        VotoRequest votoRequest = gerarVotoRequest(SIM);
+        when(pautaRepositoryFacade.findById(any())).thenReturn(gerarPauta(gerarSessaoPorAno(2030)));
+        when(usuarioRepositoryFacade.findById(any())).thenReturn(gerarUsuario(1L));
+        when(userInfoWSClient.buscaPermissaoUsuario(any())).thenReturn(UNABLE_TO_VOTE);
+
+        BusinessException businessException = assertThrows(BusinessException.class, () -> cadastrarVoto.executar(votoRequest));
+        assertEquals("Usuário com Cpf 11111111111 não tem permissão para votar", businessException.getMessage());
     }
 
     @Test
@@ -108,6 +128,7 @@ class CadastrarVotoTest {
         VotoRequest votoRequest = gerarVotoRequest(sim);
         when(pautaRepositoryFacade.findById(any())).thenReturn(gerarPauta(gerarSessaoPorAno(2030)));
         when(usuarioRepositoryFacade.findById(any())).thenReturn(gerarUsuario(2L));
+        when(userInfoWSClient.buscaPermissaoUsuario(any())).thenReturn(ABLE_TO_VOTE);
 
         cadastrarVoto.executar(votoRequest);
 
