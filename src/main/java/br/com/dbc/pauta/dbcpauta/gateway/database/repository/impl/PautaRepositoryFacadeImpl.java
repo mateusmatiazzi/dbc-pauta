@@ -1,5 +1,6 @@
 package br.com.dbc.pauta.dbcpauta.gateway.database.repository.impl;
 
+import br.com.dbc.pauta.dbcpauta.exception.PautaNaoEncontradaException;
 import br.com.dbc.pauta.dbcpauta.gateway.database.entity.Pauta;
 import br.com.dbc.pauta.dbcpauta.gateway.database.repository.PautaRepositoryFacade;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,6 @@ public class PautaRepositoryFacadeImpl implements PautaRepositoryFacade {
 
     @Override
     public Pauta findById(Long id) {
-        return pautaRepository.findById(id).orElse(null);
+        return pautaRepository.findById(id).orElseThrow(() -> new PautaNaoEncontradaException(id));
     }
 }
